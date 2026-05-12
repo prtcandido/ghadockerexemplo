@@ -93,10 +93,10 @@ jobs:
             
             # 2. Parar e remover o container antigo (se existir)
             sudo docker stop meu-app-container || true
-            sudodocker rm meu-app-container || true
+            sudo docker rm meu-app-container || true
             
             # 3. Baixar a imagem nova
-            sudo docker pull ${{ secrets.DOCKER_USERNAME }}/meu-app:latest
+            sudo docker pull ${{ secrets.DOCKER_USERNAME }}/ghadockerimg:latest
             
             # 4. Iniciar o novo container
             sudo docker run -d \
@@ -104,7 +104,7 @@ jobs:
               --restart unless-stopped \
               -p 80:3000 \
               -e NODE_ENV=production \
-              ${{ secrets.DOCKER_USERNAME }}/meu-app:latest
+              ${{ secrets.DOCKER_USERNAME }}/ghadockerimg:latest
             
             # 5. Limpeza de imagens órfãs (prune) para economizar disco
             sudo docker image prune -f
