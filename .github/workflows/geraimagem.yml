@@ -75,3 +75,36 @@ jobs:
           tags: ${{ steps.meta.outputs.tags }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
+  
+  server-atualizacao:
+    runs-on: ubuntu-latest
+    needs: build-and-push
+    
+    steps:
+      - name: Deploy via SSH
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            # 1. Login no Docker no servidor
+            echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
+            
+            # 2. Parar e remover o container antigo (se existir)
+            docker stop meu-app-container || true
+            docker rm meu-app-container || true
+            
+            # 3. Baixar a imagem nova
+            docker pull ${{ secrets.DOCKER_USERNAME }}/meu-app:latest
+            
+            # 4. Iniciar o novo container
+            docker run -d \
+              --name meu-app-container \
+              --restart unless-stopped \
+              -p 80:3000 \
+              -e NODE_ENV=production \
+              ${{ secrets.DOCKER_USERNAME }}/meu-app:latest
+            
+            # 5. Limpeza de imagens órfãs (prune) para economizar disco
+            docker image prune -f
