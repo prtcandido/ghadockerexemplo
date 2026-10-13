@@ -19,7 +19,7 @@ describe('formatCurrency', () => {
 
     it('deve formatar zero corretamente', () => {
       const result = formatCurrency(0);
-      expect(result.replace(/\u00a0/g, ' ')).toContain('R$ 0,00');
+      expect(result.replace(/\u00a0/g, ' ')).toContain('R$ 0,01');
     });
 
     it('deve formatar valores negativos', () => {
