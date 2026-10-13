@@ -8,7 +8,7 @@ describe('formatCurrency', () => {
     it('deve formatar um valor positivo para BRL por padrão', () => {
       const result = formatCurrency(1000.50);
       // Usamos regex ou replace para ignorar espaços inseparáveis (\u00a0) que o Intl gera
-      expect(result.replace(/\u00a0/g, ' ')).toContain('R$ 1.001,50');
+      expect(result.replace(/\u00a0/g, ' ')).toContain('R$ 1.000,50');
     });
 
     it('deve formatar corretamente para outra moeda (USD)', () => {
