@@ -76,35 +76,35 @@ jobs:
           cache-from: type=gha
           cache-to: type=gha,mode=max
   
-  # server-atualizacao:
-  #   runs-on: ubuntu-latest
-  #   needs: build-and-push
+  server-atualizacao:
+    runs-on: ubuntu-latest
+    needs: build-and-push
     
-  #   steps:
-  #     - name: Deploy via SSH
-  #       uses: appleboy/ssh-action@v1.0.3
-  #       with:
-  #         host: ${{ secrets.SERVER_HOST }}
-  #         username: ${{ secrets.SERVER_USER }}
-  #         password: ${{ secrets.SERVER_PASSWORD }}
-  #         script: |
-  #           # 1. Login no Docker no servidor
-  #           echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
+    steps:
+      - name: Deploy via SSH
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USER }}
+          password: ${{ secrets.SERVER_PASSWORD }}
+          script: |
+            # 1. Login no Docker no servidor
+            echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
             
-  #           # 2. Parar e remover o container antigo (se existir)
-  #           sudo docker stop meu-app-container || true
-  #           sudo docker rm meu-app-container || true
+            # 2. Parar e remover o container antigo (se existir)
+            sudo docker stop meu-app-container || true
+            sudo docker rm meu-app-container || true
             
-  #           # 3. Baixar a imagem nova
-  #           sudo docker pull ${{ secrets.DOCKER_USERNAME }}/ghadockerimg:latest
+            # 3. Baixar a imagem nova
+            sudo docker pull ${{ secrets.DOCKER_USERNAME }}/ghadockerimg:latest
             
-  #           # 4. Iniciar o novo container
-  #           sudo docker run -d \
-  #             --name meu-app-container \
-  #             --restart unless-stopped \
-  #             -p 80:80 \
-  #             -e NODE_ENV=production \
-  #             ${{ secrets.DOCKER_USERNAME }}/ghadockerimg:latest
+            # 4. Iniciar o novo container
+            sudo docker run -d \
+              --name meu-app-container \
+              --restart unless-stopped \
+              -p 80:80 \
+              -e NODE_ENV=production \
+              ${{ secrets.DOCKER_USERNAME }}/ghadockerimg:latest
             
-  #           # 5. Limpeza de imagens órfãs (prune) para economizar disco
-  #           sudo docker image prune -f
+            # 5. Limpeza de imagens órfãs (prune) para economizar disco
+            sudo docker image prune -f
